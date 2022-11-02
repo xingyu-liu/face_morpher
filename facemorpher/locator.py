@@ -1,20 +1,14 @@
 """
 Locate face points
 """
-
+# %%
 import cv2
 import numpy as np
 import os.path as path
 import dlib
 import os
 
-
-DATA_DIR = os.environ.get(
-  'DLIB_DATA_DIR',
-  path.join(path.dirname(path.dirname(path.realpath(__file__))), 'data')
-)
-dlib_detector = dlib.get_frontal_face_detector()
-dlib_predictor = dlib.shape_predictor(path.join(DATA_DIR, 'shape_predictor_68_face_landmarks.dat'))
+# %%
 
 def boundary_points(points, width_percent=0.1, height_percent=0.1):
   """ Produce additional boundary points
@@ -30,10 +24,10 @@ def boundary_points(points, width_percent=0.1, height_percent=0.1):
           [x+w-spacerw, y+spacerh]]
 
 
-def face_points(img, add_boundary_points=True):
-  return face_points_dlib(img, add_boundary_points)
+def face_points(img, landmark_num=68, add_boundary_points=True):
+  return face_points_dlib(img, landmark_num, add_boundary_points)
 
-def face_points_dlib(img, add_boundary_points=True):
+def face_points_dlib(img, landmark_num=68, add_boundary_points=True):
   """ Locates 68 face points using dlib (http://dlib.net)
     Requires shape_predictor_68_face_landmarks.dat to be in face_morpher/data
     Download at: http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
@@ -41,6 +35,13 @@ def face_points_dlib(img, add_boundary_points=True):
   :param add_boundary_points: bool to add additional boundary points
   :returns: Array of x,y face points. Empty array if no face found
   """
+  DATA_DIR = os.environ.get(
+    'DLIB_DATA_DIR',
+    path.join(path.dirname(path.dirname(path.realpath(__file__))), 'data')
+  )
+  dlib_detector = dlib.get_frontal_face_detector()
+  dlib_predictor = dlib.shape_predictor(path.join(DATA_DIR, f'shape_predictor_{landmark_num}_face_landmarks.dat'))
+
   try:
     points = []
     rgbimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -49,7 +50,7 @@ def face_points_dlib(img, add_boundary_points=True):
     if rects and len(rects) > 0:
       # We only take the first found face
       shapes = dlib_predictor(rgbimg, rects[0])
-      points = np.array([(shapes.part(i).x, shapes.part(i).y) for i in range(68)], np.int32)
+      points = np.array([(shapes.part(i).x, shapes.part(i).y) for i in range(landmark_num)], np.int32)
 
       if add_boundary_points:
         # Add more points inwards and upwards as dlib only detects up to eyebrows
@@ -73,6 +74,7 @@ def face_points_stasm(img, add_boundary_points=True):
   :param add_boundary_points: bool to add 2 additional points
   :returns: Array of x,y face points. Empty array if no face found
   """
+
   try:
     points = stasm.search_single(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
   except Exception as e:

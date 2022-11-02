@@ -28,7 +28,10 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from tqdm import tqdm
 
+import sys, os
+sys.path.append('/data0/home/liulab/project/thbi_face_morph/face_morpher')
 from facemorpher import locator
 from facemorpher import aligner
 from facemorpher import warper
@@ -83,6 +86,7 @@ def averager(imgpaths, dest_filename=None, width=500, height=600, background='bl
 
   num_images = len(images)
   result_images = np.zeros(images[0].shape, np.float32)
+  
   for i in range(num_images):
     result_images += warper.warp_image(images[i], point_set[i],
                                        dest_points, size, np.float32)

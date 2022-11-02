@@ -82,6 +82,8 @@ def resize_align(img, points, size):
   # Resize image based on bounding rectangle
   rect = cv2.boundingRect(np.array([points], np.int32))
   scale = scaling_factor(rect, size)
+  scale = scale*0.5
+  # print(f'scale={scale}')
   img = resize_image(img, scale)
 
   # Align bounding rect to center

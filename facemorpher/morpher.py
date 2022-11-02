@@ -31,6 +31,8 @@ import os
 import numpy as np
 import cv2
 
+import sys, os
+sys.path.append('/data0/home/liulab/project/thbi_face_morph/face_morpher')
 from facemorpher import locator
 from facemorpher import aligner
 from facemorpher import warper

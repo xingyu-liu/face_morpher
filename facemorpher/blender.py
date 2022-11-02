@@ -9,7 +9,7 @@ def mask_from_points(size, points):
   :returns: mask of values 0 and 255 where
             255 indicates the convex hull containing the points
   """
-  radius = 10  # kernel size
+  radius = 20  # kernel size
   kernel = np.ones((radius, radius), np.uint8)
 
   mask = np.zeros(size, np.uint8)
